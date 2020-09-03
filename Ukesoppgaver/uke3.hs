@@ -36,10 +36,12 @@ scalarproduct xs ys = sum [(x*y) | (x,y) <- zip xs ys]
 
 --C
 rem1 :: Eq a => [a] -> a -> [a]
-rem1 xs x = [y | y <- xs, y /= x ]
-    
---if (head xs == x) then tail xs else rem  
---[ xs <- drop 1 xs | head xs == x]
+--rem1 xs x = [y | y <- xs, y /= x ]
+--Denne fjerner alle som er lik x
+rem1 [] n = []
+rem1 (x:xs) n | n == x = xs
+              | otherwise = x : rem1 xs n
+
 
 --D
 --diff :: Eq a => [a] -> [a] -> [a]
