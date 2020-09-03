@@ -71,3 +71,8 @@ mult1 = \x -> (\y -> (\z -> x*y*z))
 
 
 --4.8
+luhnDouble :: Int -> Int
+luhnDouble x = if(x*2 > 9)  then (x*2)-9 else x*2
+
+luhn ::Int -> Int -> Int -> Int -> Bool
+luhn a b c d = if (d + (luhnDouble c) + b + (luhnDouble a)) `mod`  10 == 0 then True else False
