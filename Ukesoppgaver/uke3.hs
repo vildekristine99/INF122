@@ -35,10 +35,20 @@ scalarproduct xs ys = sum [(x*y) | (x,y) <- zip xs ys]
 
 
 --C
---rem1 :: Eq a => [a] -> a -> [a]
---rem1 xs x = if (head xs == x) then tail xs else rem  
+rem1 :: Eq a => [a] -> a -> [a]
+rem1 xs x = [y | y <- xs, y /= x ]
+    
+--if (head xs == x) then tail xs else rem  
 --[ xs <- drop 1 xs | head xs == x]
 
 --D
-diff :: Eq a => [a] -> [a] -> [a]
-diff xs ys = []
+--diff :: Eq a => [a] -> [a] -> [a]
+--diff xs ys = [zs | zs <- xs, zs /= ys ]
+
+--E
+--4.8
+luhnDouble :: Int -> Int
+luhnDouble x = if(x*2 > 9)  then (x*2)-9 else x*2
+
+luhn ::Int -> Int -> Int -> Int -> Bool
+luhn a b c d = if (d + (luhnDouble c) + b + (luhnDouble a)) `mod`  10 == 0 then True else False
