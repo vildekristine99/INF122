@@ -5,8 +5,7 @@ sant :: Bool -> Bool -> Bool
 sant x y = if (x == True) then 
                 if y == True then True else False 
             else False
-{-eller
-sant x y = if (x==True && y==True) then True else False-}
+
 
 --4.7
 mult :: Int -> Int -> Int -> Int
@@ -36,8 +35,6 @@ scalarproduct xs ys = sum [(x*y) | (x,y) <- zip xs ys]
 
 --C
 rem1 :: Eq a => [a] -> a -> [a]
---rem1 xs x = [y | y <- xs, y /= x ]
---Denne fjerner alle som er lik x
 rem1 [] n = []
 rem1 (x:xs) n | n == x = xs
               | otherwise = x : rem1 xs n
@@ -48,6 +45,7 @@ diff :: Eq a => [a] -> [a] -> [a]
 diff zs [] = zs
 diff (z:zs) (y:ys) | [z' | z' <- (z:zs), z' == y] == [] = diff (z:zs) ys
                    | otherwise = diff (rem1 (z:zs) y) ys
+
 
 --E
 --4.8
