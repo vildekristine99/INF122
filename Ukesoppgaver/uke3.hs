@@ -44,8 +44,10 @@ rem1 (x:xs) n | n == x = xs
 
 
 --D
---diff :: Eq a => [a] -> [a] -> [a]
---diff xs ys = [zs | zs <- xs, zs /= ys ]
+diff :: Eq a => [a] -> [a] -> [a]
+diff zs [] = zs
+diff (z:zs) (y:ys) | [z' | z' <- (z:zs), z' == y] == [] = diff (z:zs) ys
+                   | otherwise = diff (rem1 (z:zs) y) ys
 
 --E
 --4.8
