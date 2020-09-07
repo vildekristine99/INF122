@@ -112,4 +112,4 @@ luhnDouble3 x = let d = x*2 in
                         else d
 
 luhn2 ::Int -> Int -> Int -> Int -> Bool
-luhn2 x y z w = (luhnDouble x) + y + (luhnDouble z) + w `mod` 10 == 0
+luhn2 x y z w = ((luhnDouble x) + y + (luhnDouble z) + w) `mod` 10 == 0
