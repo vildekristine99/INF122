@@ -7,7 +7,7 @@ move East (x,y) = (x+1,y)
 move West (x,y) = (x-1,y)
 
 --8.1
-data Nat = Zero | Succ Nat --deriving (Show, Read, Eq, Ord)
+data Nat = Zero | Succ Nat deriving (Show, Read, Eq, Ord)
 add :: Nat -> Nat -> Nat 
 add Zero n = n 
 add (Succ m) n = Succ (add m n)
@@ -23,14 +23,7 @@ data Ordering = LT | EQ | GT
 
 data Tree a = Leaf a | Node (Tree a) a (Tree a)
 occurs :: Ord a => a -> Tree a -> Bool
-occurs x (Leaf y)       = x==y
-occurs x (Node l y r)   = x==y || occurs x l || occurs x r 
-
-
---uke4
-{-
-tegnpos2 :: Char -> String -> [Int]
-tegnpos2 _ [] = []
-tegnpos2 n (x:xs) | (x==n) = []++ (x !! [0..length xs-1])
-                  | otherwise = tegnpos2 n xs
--}
+occurs x (Leaf y)                   = x==y
+occurs x (Node l y r)   | x == y    = True
+                        | x < y     = occurs x l 
+                        | otherwise = occurs x r
