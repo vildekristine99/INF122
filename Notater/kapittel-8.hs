@@ -17,13 +17,29 @@ mult m Zero = Zero
 mult m (Succ n) = add m (mult m n)
 
 --8.2
-data Ordering = LT | EQ | GT
+--data Ordering = LT | EQ | GT
 --compare :: Ord a => a -> a -> Ordering
-
 
 data Tree a = Leaf a | Node (Tree a) a (Tree a)
 occurs :: Ord a => a -> Tree a -> Bool
 occurs x (Leaf y)                   = x==y
-occurs x (Node l y r)   | x == y    = True
-                        | x < y     = occurs x l 
-                        | otherwise = occurs x r
+occurs x (Node l y r) = case compare x y of
+                            LT -> occurs x l 
+                            EQ -> True
+                            GT -> occurs x r
+--This version is more efficient because it only requires one comparison between x and y for each node,
+--whereas the previous version may require two.
+
+--8.3
+--data Tree a = Leaf a | Node (Tree a) (Tree a)
+
+data Ast = V Int | P Ast Ast | M Ast Ast
+eval :: Ast -> Int
+eval (V x) = x
+eval (P x y) = (eval x) + (eval y)
+eval (M x y) = (eval x) * (eval y)
+
+inn :: Ast -> String
+inn (V x) = show x
+inn (P x y) = (inn x) ++ " + " ++ (inn y)
+inn (M x y) = (inn x) ++ " * " ++ (inn y)
