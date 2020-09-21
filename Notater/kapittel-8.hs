@@ -43,3 +43,14 @@ inn :: Ast -> String
 inn (V x) = show x
 inn (P x y) = (inn x) ++ " + " ++ (inn y)
 inn (M x y) = (inn x) ++ " * " ++ (inn y)
+
+tokenize' :: String -> [String]
+tokenize' [] = []
+tokenize' (x:xs)
+    | elem x t = [x] : tokenize' xs
+    | elem x w = tokenize' xs
+    | otherwise = (takeWhile (notion (t++w)) (x:xs)) : tokenize' (dropWhile(notion (t++w)) (x:xs))
+        where 
+            notion xs = \x -> not(elem x xs)
+            t = "*+"
+            w = " "

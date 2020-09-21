@@ -1,8 +1,10 @@
-import Data.Char ( isDigit, isLetter )
+import Data.Char
 -------Innlevering-------
 --1
 --data Ast = V Int | P Ast Ast | M Ast Ast 
 data Ast = V Int | P Ast Ast | M Ast Ast | B String deriving (Show)
+--inn (let (a,r) = parser ["+","1","2"] in a)
+
 eval :: Ast -> Int
 eval (V p) = p
 eval (P p q) = eval p + eval q
@@ -15,21 +17,9 @@ inn :: Ast -> String
 inn (V p) = show p
 inn (P p q) = "(" ++ inn p ++ " + " ++ inn q ++ ")"
 inn (M p q) = "(" ++ inn p ++ " * " ++ inn q ++ ")"
---inn (B p) = 
-
+--inn (B s) = s
 
 --3.1
-tokenize' :: String -> [String]
-tokenize' [] = []
-tokenize' (x:xs)
-    | elem x t = [x] : tokenize' xs
-    | elem x w = tokenize' xs
-    | otherwise = (takeWhile (notion (t++w)) (x:xs)) : tokenize' (dropWhile(notion (t++w)) (x:xs))
-        where 
-            notion xs = \x -> not(elem x xs)
-            t = "*+"
-            w = " "
-
 tokenize :: String -> [String]
 tokenize [] = []
 tokenize (' ':xs) = tokenize xs
@@ -39,11 +29,34 @@ tokenize (x:xs) = if isDigit x
     then (takeWhile isDigit (x:xs)) : tokenize (dropWhile isDigit xs)
     else (takeWhile isLetter (x:xs)) : tokenize (dropWhile isLetter xs)
 
+--timen
+tokenize (x:xs) 
+    | isDigit x = let (tall, r) = span isDigit (x:xs) in
+        tall : tokenize r
+    | isAlpha x = let (ord, r) = span isAlpha (x:xs) in
+        ord : tokenize r
+    | otherwise = error("Invalid syntax at " ++ [x])
+
 
 --3.2
+--timen
+parser :: [String] -> (Ast, [String])
+parser [] =  error "Uttrykket er ikke korrekt"
+parser ("+":xs) = ((P a1 a1), rest)
+                        where 
+                            (a1, r1) = parser xs
+                            (a2, rest) = parser r1
+parser ("*":xs) = ((M a1 a1), rest)
+                        where 
+                            (a1, r1) = parser xs
+                            (a2, rest) = parser r1
+parser (x:xs) 
+        | isDigit (head x) = ((V (read x :: Int)), xs)
+        | otherwise = ((B x), xs)
 
+--min
 parseU :: [String] -> (Ast, [String])
-parseU [] =  error "Uttrykket er ikke korrekt"
+parseU [] =  error "Uttrykket er ikke korrekt" --legger til feilmelding til oppgsve 3.3
 parseU ("+":xs) = let (e1, r1) = parseU xs;
                       (e2, r2) = parseU r1 in (P e1 e2, r2)
 parseU ("*":xs) = let (e1, r1) = parseU xs;
@@ -61,7 +74,16 @@ onlyDigits xs = takeWhile isDigit xs == xs
 ev :: String -> Int
 ev xs = eval (parse xs)
 
+--timen
+eve :: String -> Int
+eve ss 
+        | rest == [] = eval ast
+        | otherwise = error ("Could not parse the whole string: "++ concat rest)
+        where (ast,rest) = parser(tokenize ss)
 
 --3.4
 innfiks :: String -> String
 innfiks xs = inn (parse xs)
+
+--innfiks ss = let (ast, rest) = parser (tokenize xs) in
+    --inn ast
