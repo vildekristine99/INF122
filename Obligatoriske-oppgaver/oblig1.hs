@@ -31,7 +31,7 @@ parseExpr(s) = let (a,z) = parseP(s) in
 parseTerm :: [String] -> (Ast, [String])
 parseTerm(s) = let (a,z) = parseF(s) in
     if null z then (a,z)
-    else if (head(z) == "*") && (isDigit(head(show a))) then
+    else if (head(z) == "*") then
         let (c,rest) = parseTerm(tail(z)) in (Mult a c, rest) 
         else  (a,z) --error "forventer *"
 parseP :: [String] -> (Ast, [String])
@@ -49,6 +49,21 @@ parseF(x:s)
 
 parse :: String -> Ast
 parse str = fst(parseExpr(tokenize str))
+
+--har prøvd å gjøre parseren slik at den ikke godtar at man avslutter på et nummer
+--men får den ikke til å funke
+{-
+parseTerm :: [String] -> (Ast, [String])
+parseTerm(s) = let (a,z) = parseE(s) in
+    if ((null z) && not (onlyDigits(show (a)))) 
+        then (a,z)
+    else 
+        if onlyDigits(show (a)) then
+            if((head(z) == "*") && onlyAlpha(last z)) then
+                let (c,rest) = parseTerm(tail(z)) in (Mult a c, rest) 
+            else  error "forventer *"
+        else let (c,rest) = parseE(tail(z)) in (Mult a c, rest)
+-}
 
 
 --2
@@ -68,23 +83,31 @@ viss ast = tre ast ""
 vis :: Ast -> IO ()
 vis ast = putStr (viss ast)
 
-
+{-
+Expr -> Term + Expr | Term - Expr | Term
+Term -> Number * Term | Word
+Word -> Letter Word | Letter
+Number -> Digit Number | Digit
+Letter -> a | b | c | ...| x | y | z | A | B | ...| Y | Z
+Digit -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+-}
 --3
 ev :: Ast -> String
 ev (Word w) = w
 ev (Num n) = show n
-ev (Mult x y)   
-    | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) * (read (ev y) :: Int))
-    | onlyDigits (ev x) && onlyAlpha (ev y) = concat (replicate (read (ev x) :: Int) (ev y))
-    | otherwise = error "ikke gyldig"
+ev (Mult (Num x) y) = concat (replicate (read (show x) :: Int) (ev y))
+-- otherwise = error "ikke gyldig"
 ev (Plus x y) 
-    | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) + (read (ev y) :: Int))
     | onlyAlpha (ev x) && onlyAlpha (ev y) = ev x ++ ev y
     | otherwise = error "ikke gyldig"
 ev (Minus x y) 
-    | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) - (read (ev y) :: Int))
     | onlyAlpha (ev x) && onlyAlpha (ev y) = diff (ev x) (ev y)
     | otherwise = error "ikke gyldig"
+
+-- | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) - (read (ev y) :: Int))
+-- | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) + (read (ev y) :: Int))  
+-- | onlyDigits (show x) && onlyDigits (ev y) = show ((read (show x) :: Int) * (read (ev y) :: Int))
+-- | onlyDigits (show x) && onlyAlpha (ev y) = 
 
 eval :: Ast -> String
 eval str = ev str
