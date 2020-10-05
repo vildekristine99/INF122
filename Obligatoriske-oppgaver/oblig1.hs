@@ -2,6 +2,14 @@
 module Oblig1 where
 import Data.Char
 
+{-
+Expr -> Term + Expr | Term - Expr | Term
+Term -> Number * Term | Word
+Word -> Letter Word | Letter
+Number -> Digit Number | Digit
+Letter -> a | b | c | ...| x | y | z | A | B | ...| Y | Z
+Digit -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+-}
 
 data Ast
     = Word String
@@ -19,7 +27,7 @@ tokenize ('+':xs) = "+": tokenize xs
 tokenize ('-':xs) = "-": tokenize xs
 tokenize (x:xs) = if isDigit x 
     then (takeWhile isDigit (x:xs)) : tokenize (dropWhile isDigit xs)
-    else (takeWhile isLetter (x:xs)) : tokenize (dropWhile isLetter xs)
+    else (takeWhile isAlpha (x:xs)) : tokenize (dropWhile isAlpha xs)
 
 --1
 parseExpr :: [String] -> (Ast, [String])
@@ -52,6 +60,8 @@ parse str = fst(parseExpr(tokenize str))
 
 --har prøvd å gjøre parseren slik at den ikke godtar at man avslutter på et nummer
 --men får den ikke til å funke
+--skjønner at man må sjekke at uttrykket etter ett tall er en *
+--og at den ikke kan avslutte på ett tall
 {-
 parseTerm :: [String] -> (Ast, [String])
 parseTerm(s) = let (a,z) = parseE(s) in
@@ -83,26 +93,19 @@ viss ast = tre ast ""
 vis :: Ast -> IO ()
 vis ast = putStr (viss ast)
 
-{-
-Expr -> Term + Expr | Term - Expr | Term
-Term -> Number * Term | Word
-Word -> Letter Word | Letter
-Number -> Digit Number | Digit
-Letter -> a | b | c | ...| x | y | z | A | B | ...| Y | Z
-Digit -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
--}
+
 --3
 ev :: Ast -> String
 ev (Word w) = w
 ev (Num n) = show n
 ev (Mult (Num x) y) = concat (replicate (read (show x) :: Int) (ev y))
--- otherwise = error "ikke gyldig"
+ev (Mult (Word x) y) = error "ikke gyldig Mult"
 ev (Plus x y) 
     | onlyAlpha (ev x) && onlyAlpha (ev y) = ev x ++ ev y
-    | otherwise = error "ikke gyldig"
+    | otherwise = error "ikke gyldig Plus"
 ev (Minus x y) 
     | onlyAlpha (ev x) && onlyAlpha (ev y) = diff (ev x) (ev y)
-    | otherwise = error "ikke gyldig"
+    | otherwise = error "ikke gyldig Minus"
 
 -- | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) - (read (ev y) :: Int))
 -- | onlyDigits (ev x) && onlyDigits (ev y) = show ((read (ev x) :: Int) + (read (ev y) :: Int))  
@@ -119,7 +122,7 @@ onlyAlpha :: [Char] -> Bool
 onlyAlpha xs = takeWhile isAlpha xs == xs
 
 
---Til og trekke fra en string fra en anna string
+--Til og trekke fra en string fra en anna string, hentet fra uke 3 innlevering
 rem1 :: Eq a => [a] -> a -> [a]
 rem1 [] _ = []
 rem1 (x:xs) el = if (x == el) 
