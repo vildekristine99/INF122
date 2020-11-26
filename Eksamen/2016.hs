@@ -49,5 +49,7 @@ type Name = String
 type Pnum = Integer
 type Pbook = Name -> Maybe Pnum
 
-lookup :: Pbook -> Name -> Maybe Pnum
-lookup b n = b n
+lookup' :: Pbook -> Name -> Maybe Pnum
+lookup' b n = b n
+
+
