@@ -17,7 +17,7 @@ naboer b currentCell maxIdx = []
 
     --eller
     
-    if(x+1 > maxindex)then else
+    --if(x+1 > maxindex)then else
 
 --Sjekke at ingen av coordinatene er < 0 eller > maxIdx
 {-
