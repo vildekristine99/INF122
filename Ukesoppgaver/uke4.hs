@@ -19,7 +19,7 @@ fjern1 (s:ss) c = if s == c then fjern1 ss c else s : (fjern1 ss c)
 
 --B
 tegnpos :: Char -> String -> [Int]
-tegnpos n xs = [y | y <- [0..length xs-1], xs !! y == n]
+tegnpos n xs = [y | y <- [0..], xs !! y == n]
 
 --løsning fra timen
 tegnposL :: Char -> String -> [Int]

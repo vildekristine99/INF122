@@ -1,3 +1,6 @@
 {
-    "haskell.hlint.executablePath": "lunaryorn.hlint-0.5.1"
+    "haskell.hlint.executablePath": "lunaryorn.hlint-0.5.1",
+    "haskell.hlint.hints": [
+    
+    ]
 }
